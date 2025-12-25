@@ -17,4 +17,3 @@ class UserResponse(BaseModel):
     role: str
     is_active: bool
 
-# Add schemas for other entities (e.g., StudentCreate, etc.) similarly.

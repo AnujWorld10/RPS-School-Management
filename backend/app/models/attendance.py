@@ -1,19 +1,20 @@
-from sqlalchemy import Column, Integer, ForeignKey, Date, Boolean
+from sqlalchemy import Column, Integer, ForeignKey, Date, Boolean, String
 from app.database.base import Base
 
 class Attendance(Base):
     __tablename__ = "attendance"
     id = Column(
-        Integer,
+        String(10),
         primary_key=True,
         index=True,
-        doc="Unique attendance ID (Primary Key, required)"
+        unique=True,
+        doc="Unique attendance ID (Primary Key, required, format: Rps_XXXXX)"
     )
     student_id = Column(
-        Integer,
+        String(10),
         ForeignKey("students.id"),
         nullable=False,
-        doc="Reference to students.id (required)"
+        doc="Reference to students.id (required, format: Rps_XXXXX)"
     )
     date = Column(
         Date,

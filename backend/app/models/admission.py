@@ -9,17 +9,18 @@ class AdmissionStatus(enum.Enum):
 
 class Admission(Base):
     __tablename__ = "admissions"
-    id = Column(
-        Integer,
+    admission_id = Column(
+        String(10),
         primary_key=True,
         index=True,
-        doc="Unique admission ID (Primary Key, required)"
+        unique=True,
+        doc="Unique admission ID (Primary Key, required, format: Rps_XXXXXX)"
     )
     student_id = Column(
-        Integer,
+        String(10),
         ForeignKey("students.id"),
         nullable=False,
-        doc="Reference to students.id (required)"
+        doc="Reference to students.id (required, format: Rps_XXXXX)"
     )
     application_date = Column(
         Date,

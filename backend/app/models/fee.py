@@ -10,16 +10,17 @@ class FeeStatus(enum.Enum):
 class Fee(Base):
     __tablename__ = "fees"
     id = Column(
-        Integer,
+        String(10),
         primary_key=True,
         index=True,
-        doc="Unique fee ID (Primary Key, required)"
+        unique=True,
+        doc="Unique fee ID (Primary Key, required, format: Rps_XXXXX)"
     )
     student_id = Column(
-        Integer,
+        String(10),
         ForeignKey("students.id"),
         nullable=False,
-        doc="Reference to students.id (required)"
+        doc="Reference to students.id (required, format: Rps_XXXXX)"
     )
     amount = Column(
         Float,

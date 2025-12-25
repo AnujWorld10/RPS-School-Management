@@ -4,10 +4,11 @@ from app.database.base import Base
 class RemovedStudent(Base):
     __tablename__ = "removed_students"
     id = Column(
-        Integer,
+        String(10),
         primary_key=True,
         index=True,
-        doc="Unique removed student ID (Primary Key, required)"
+        unique=True,
+        doc="Unique removed student ID (Primary Key, required, format: Rps_XXXXX)"
     )
     name = Column(
         String(255),

@@ -1,14 +1,15 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from app.database.base import Base
 from datetime import datetime
 
 class AuditLog(Base):
     __tablename__ = "audit_logs"
     id = Column(
-        Integer,
+        String(10),
         primary_key=True,
         index=True,
-        doc="Unique audit log ID (Primary Key, required)"
+        unique=True,
+        doc="Unique audit log ID (Primary Key, required, format: Rps_XXXXX)"
     )
     action = Column(
         String(100),
@@ -16,9 +17,10 @@ class AuditLog(Base):
         doc="Action performed (required, max 100 chars)"
     )
     user_id = Column(
-        Integer,
+        String(10),
+        ForeignKey("users.id"),
         nullable=False,
-        doc="User ID who performed the action (required)"
+        doc="User ID who performed the action (required, format: Rps_XXXXX)"
     )
     timestamp = Column(
         DateTime,

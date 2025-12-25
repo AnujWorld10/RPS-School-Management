@@ -1,4 +1,3 @@
-curl -X POST http://localhost:8000/api/v1/students/ \
 
 # RPS School Management System — API Documentation
 
@@ -19,14 +18,14 @@ Welcome to the RPS School Management System API! This documentation is designed 
 ---
 
 ## Introduction
-The RPS School Management System API is a RESTful backend built with FastAPI. It manages users, students, teachers, and administrative operations for a school. All endpoints use JSON for requests and responses. Authentication is handled via JWT tokens.
+The RPS School Management System API is a RESTful backend built with FastAPI. It manages users, students, teachers, classes, fees, and administrative operations for a school. All endpoints use JSON for requests and responses. Authentication is handled via JWT tokens.
 
 ---
 
 ## Authentication & Authorization
 - **Authentication:** Uses JWT (JSON Web Token) for secure access.
 - **How it works:**
-  1. User logs in with username, password, and role.
+  1. User logs in with username and password.
   2. Server returns a JWT access token.
   3. Client includes this token in the `Authorization` header for all protected requests.
 - **Header format:**
@@ -57,23 +56,25 @@ The RPS School Management System API is a RESTful backend built with FastAPI. It
 | POST   | /api/v1/students/           | Add a new student          | Yes           | ADMIN, TEACHER       |
 | GET    | /api/v1/teachers/           | List all teachers          | Yes           | ADMIN                |
 | POST   | /api/v1/teachers/           | Add a new teacher          | Yes           | ADMIN                |
+| GET    | /api/v1/classes/            | List all classes           | Yes           | ADMIN, TEACHER       |
+| POST   | /api/v1/classes/            | Add a new class            | Yes           | ADMIN                |
 | POST   | /api/v1/admin/fees          | Add a fee record           | Yes           | ADMIN                |
 
-*Registration is open only for the first user. After that, only ADMINs can register new users.
+*Registration is open only for the first user. After that, only ADMINs can register new users.*
 
 ---
 
 ## Detailed Endpoint Reference
 
 ### 1. Authentication
+
 #### POST `/api/v1/auth/login`
 - **Purpose:** Log in and receive an access token.
 - **Request Body:**
   ```json
   {
     "username": "string",
-    "password": "string",
-    "role": "ADMIN|TEACHER|STUDENT"
+    "password": "string"
   }
   ```
 - **Response:**
@@ -91,17 +92,19 @@ The RPS School Management System API is a RESTful backend built with FastAPI. It
   ```json
   {
     "username": "string",
-    "password": "string",
+    "email": "string",
     "role": "ADMIN|TEACHER|STUDENT"
   }
   ```
 - **Response:**
   ```json
   {
-    "id": 1,
+    "id": "Rps_XXXXX",
     "username": "string",
+    "email": "string",
     "role": "string",
-    "is_active": true
+    "is_active": true,
+    "generated_password": "RPS-xxxxxx"
   }
   ```
 - **Errors:** 401 (if not ADMIN after first user), 400, 500
@@ -109,6 +112,7 @@ The RPS School Management System API is a RESTful backend built with FastAPI. It
 ---
 
 ### 2. Students
+
 #### GET `/api/v1/students/`
 - **Purpose:** List all students.
 - **Auth:** ADMIN, TEACHER
@@ -116,7 +120,9 @@ The RPS School Management System API is a RESTful backend built with FastAPI. It
   ```json
   [
     {
-      "id": 1,
+      "id": "Rps_XXXXX",
+      "user_id": "Rps_XXXXX",
+      "class_id": "Rps_XXXXX",
       "name": "Jane Doe",
       "roll_number": "R-001",
       "class_name": "10A"
@@ -131,8 +137,8 @@ The RPS School Management System API is a RESTful backend built with FastAPI. It
 - **Request Body:**
   ```json
   {
-    "user_id": 2,
-    "class_id": 1,
+    "user_id": "Rps_XXXXX",
+    "class_id": "Rps_XXXXX",
     "name": "Jane Doe",
     "roll_number": "R-001",
     "admission_date": "2024-06-01",
@@ -144,7 +150,9 @@ The RPS School Management System API is a RESTful backend built with FastAPI. It
 - **Response:**
   ```json
   {
-    "id": 1,
+    "id": "Rps_XXXXX",
+    "user_id": "Rps_XXXXX",
+    "class_id": "Rps_XXXXX",
     "name": "Jane Doe",
     "roll_number": "R-001",
     "class_name": "10A"
@@ -152,9 +160,26 @@ The RPS School Management System API is a RESTful backend built with FastAPI. It
   ```
 - **Errors:** 400 (duplicate roll number), 401, 403
 
+#### GET `/api/v1/students/{student_id}`
+- **Purpose:** Get a student by ID.
+- **Auth:** ADMIN, TEACHER
+- **Response:**
+  ```json
+  {
+    "id": "Rps_XXXXX",
+    "user_id": "Rps_XXXXX",
+    "class_id": "Rps_XXXXX",
+    "name": "Jane Doe",
+    "roll_number": "R-001",
+    "class_name": "10A"
+  }
+  ```
+- **Errors:** 404 (not found), 401, 403
+
 ---
 
 ### 3. Teachers
+
 #### GET `/api/v1/teachers/`
 - **Purpose:** List all teachers.
 - **Auth:** ADMIN
@@ -162,7 +187,7 @@ The RPS School Management System API is a RESTful backend built with FastAPI. It
   ```json
   [
     {
-      "id": 1,
+      "id": "Rps_XXXXX",
       "name": "Mr. Smith",
       "subject": "Mathematics"
     },
@@ -176,8 +201,8 @@ The RPS School Management System API is a RESTful backend built with FastAPI. It
 - **Request Body:**
   ```json
   {
-    "user_id": 3,
-    "subject_id": 1,
+    "user_id": "Rps_XXXXX",
+    "subject_id": "001",
     "name": "Mr. Smith",
     "joining_date": "2024-06-01",
     "salary": 50000,
@@ -187,23 +212,82 @@ The RPS School Management System API is a RESTful backend built with FastAPI. It
 - **Response:**
   ```json
   {
-    "id": 1,
+    "id": "Rps_XXXXX",
     "name": "Mr. Smith",
     "subject": "Mathematics"
   }
   ```
 - **Errors:** 400, 403, 500
 
+#### GET `/api/v1/teachers/{teacher_id}`
+- **Purpose:** Get a teacher by ID.
+- **Auth:** ADMIN
+- **Response:**
+  ```json
+  {
+    "id": "Rps_XXXXX",
+    "name": "Mr. Smith",
+    "subject": "Mathematics"
+  }
+  ```
+- **Errors:** 404 (not found), 401, 403
+
 ---
 
-### 4. Admin: Fees
+### 4. Classes
+
+#### GET `/api/v1/classes/`
+- **Purpose:** List all classes.
+- **Auth:** ADMIN, TEACHER
+- **Response:** Array of classes:
+  ```json
+  [
+    {
+      "id": "Rps_XXXXX",
+      "name": "10A",
+      "section": "A",
+      "description": "Science stream",
+      "class_teacher_id": "Rps_XXXXX"
+    },
+    ...
+  ]
+  ```
+
+#### POST `/api/v1/classes/`
+- **Purpose:** Add a new class.
+- **Auth:** ADMIN
+- **Request Body:**
+  ```json
+  {
+    "name": "10A",
+    "section": "A",
+    "description": "Science stream",
+    "class_teacher_id": "Rps_XXXXX"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "id": "Rps_XXXXX",
+    "name": "10A",
+    "section": "A",
+    "description": "Science stream",
+    "class_teacher_id": "Rps_XXXXX"
+  }
+  ```
+- **Errors:** 400, 401, 403
+
+---
+
+### 5. Admin: Fees
+
 #### POST `/api/v1/admin/fees`
 - **Purpose:** Add a fee record for a student.
 - **Auth:** ADMIN
 - **Request Body:**
   ```json
   {
-    "student_id": 1,
+    "student_id": "Rps_XXXXX",
     "amount": 1000.0,
     "month": "June",
     "status": "Paid",
@@ -224,13 +308,13 @@ The RPS School Management System API is a RESTful backend built with FastAPI. It
 ```sh
 curl -X POST http://localhost:8000/api/v1/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"username":"admin","password":"secret","role":"ADMIN"}'
+  -d '{"username":"admin","password":"secret"}'
 # Response: { "access_token": "<JWT>" }
 
-
+curl -X POST http://localhost:8000/api/v1/students/ \
   -H "Authorization: Bearer <JWT>" \
   -H "Content-Type: application/json" \
-  -d '{"user_id":1,"class_id":1,"name":"Jane Doe","roll_number":"R-001","admission_date":"2024-06-01","address":"...","phone":"...","email":"..."}'
+  -d '{"user_id":"Rps_XXXXX","class_id":"Rps_XXXXX","name":"Jane Doe","roll_number":"R-001","admission_date":"2024-06-01","address":"123 Main St","phone":"1234567890","email":"jane@example.com"}'
 ```
 
 ### TypeScript Example

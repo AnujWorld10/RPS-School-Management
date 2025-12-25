@@ -1,19 +1,20 @@
-from sqlalchemy import Column, Integer, Float, ForeignKey
+from sqlalchemy import Column, Integer, Float, ForeignKey, String
 from app.database.base import Base
 
 class Salary(Base):
     __tablename__ = "salaries"
     id = Column(
-        Integer,
+        String(10),
         primary_key=True,
         index=True,
-        doc="Unique salary ID (Primary Key, required)"
+        unique=True,
+        doc="Unique salary ID (Primary Key, required, format: Rps_XXXXX)"
     )
     employee_id = Column(
-        Integer,
+        String(10),
         ForeignKey("employees.id"),
         nullable=False,
-        doc="Reference to employees.id (required)"
+        doc="Reference to employees.id (required, format: Rps_XXXXX)"
     )
     amount = Column(
         Float,

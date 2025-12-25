@@ -6,17 +6,18 @@ from app.database.base import Base
 class Student(Base):
     __tablename__ = "students"
     id = Column(
-        Integer,
+        String(10),
         primary_key=True,
         index=True,
-        doc="Unique student ID (Primary Key, required)"
+        unique=True,
+        doc="Unique student ID (Primary Key, required, format: Rps_XXXXX)"
     )
     user_id = Column(
-        Integer,
+        String(10),
         ForeignKey("users.id"),
         unique=True,
         nullable=False,
-        doc="Reference to users.id (required, unique)"
+        doc="Reference to users.id (required, unique, format: Rps_XXXXX)"
     )
     name = Column(
         String(255),
@@ -39,10 +40,10 @@ class Student(Base):
         doc="Contact phone number (optional, max 20 chars)"
     )
     class_id = Column(
-        Integer,
+        String(10),
         ForeignKey("classes.id"),
         nullable=False,
-        doc="Reference to classes.id (required)"
+        doc="Reference to classes.id (required, format: Rps_XXXXX)"
     )
     admission_date = Column(
         Date,

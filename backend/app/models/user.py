@@ -11,10 +11,11 @@ class Role(enum.Enum):
 class User(Base):
     __tablename__ = "users"
     id = Column(
-        Integer,
+        String(10),
         primary_key=True,
         index=True,
-        doc="Unique user ID (Primary Key, required)"
+        unique=True,
+        doc="Unique user ID (Primary Key, required, format: Rps_XXXXX)"
     )
     username = Column(
         String(50),
@@ -27,6 +28,13 @@ class User(Base):
         String(255),
         nullable=False,
         doc="Hashed password (required, max 255 chars)"
+    )
+    email = Column(
+        String(255),
+        unique=True,
+        index=True,
+        nullable=False,
+        doc="User email address (required, unique, max 255 chars)"
     )
     role = Column(
         Enum(Role),

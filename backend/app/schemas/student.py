@@ -12,7 +12,9 @@ class StudentCreate(BaseModel):
     email: str
 
 class StudentResponse(BaseModel):
-    id: int
+    id: str
+    user_id: str
+    class_id: str
     name: str
     roll_number: str
     class_name: str

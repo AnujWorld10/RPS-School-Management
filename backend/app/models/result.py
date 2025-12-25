@@ -4,22 +4,23 @@ from app.database.base import Base
 class Result(Base):
     __tablename__ = "results"
     id = Column(
-        Integer,
+        String(10),
         primary_key=True,
         index=True,
-        doc="Unique result ID (Primary Key, required)"
+        unique=True,
+        doc="Unique result ID (Primary Key, required, format: Rps_XXXXX)"
     )
     student_id = Column(
-        Integer,
+        String(10),
         ForeignKey("students.id"),
         nullable=False,
-        doc="Reference to students.id (required)"
+        doc="Reference to students.id (required, format: Rps_XXXXX)"
     )
     subject_id = Column(
-        Integer,
+        String(3),
         ForeignKey("subjects.id"),
         nullable=False,
-        doc="Reference to subjects.id (required)"
+        doc="Reference to subjects.id (required, 3-digit string)"
     )
     exam_name = Column(
         String(100),
